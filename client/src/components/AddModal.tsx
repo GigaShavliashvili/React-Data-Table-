@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -13,45 +13,74 @@ import {
 } from "reactstrap";
 import styled from "styled-components";
 import { useTableStore } from "../zustand/store";
-/* {edit, rowInfo,}:{edit:boolean, rowInfo:Row} */
-function AddModal() {
+
+
+interface Rowinfo {
+  id: number;
+  name: string;
+  email: string;
+  gender: string;
+  address: {
+    street: string;
+    city: string;
+  };
+  phone: string;
+}
+
+function AddModal({
+  editable,
+  modal,
+  setModal,
+  rowInfo,
+}: {
+  editable: boolean;
+  modal: boolean;
+  setModal: (value: boolean) => void;
+  rowInfo:Rowinfo
+}) {
+
   // user form
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [street, setStreet] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
+  const [phone, setPhoneNumber] = useState<string>("");
+  const [id, setUserID] = useState<number>(0)
 
-  const row = useTableStore((state: any) => state.rowData);
-  console.log(row);
-
-  const [name, setName] = useState<string>(row.name);
-  const [email, setEmail] = useState<string>(row.email);
-  const [city, setCity] = useState<string>(row.address.city);
-  const [street, setStreet] = useState<string>(row.address.street);
-  const [gender, setGender] = useState<string>(row.gender);
-  const [phoneNumber, setPhoneNumber] = useState<string>(row.phone);
-
-console.log(name);
+useEffect(() =>{
+setName(rowInfo.name)
+setEmail(rowInfo.email)
+setCity(rowInfo.address.city)
+setStreet(rowInfo.address.street)
+setPhoneNumber(rowInfo.phone)
+setGender(rowInfo.gender)
+setUserID(rowInfo.id)
+},[editable])
 
 
-  // modal toggle state
-const [modal, setModal] = useState<boolean>(false)
-
-  const toggle = () => setModal(!modal);
 
   // get add event
-  const addUsertoTabl = useTableStore((state: any) => state.addUsertoTable);
+  const addUsertoTable = useTableStore((state) => state.addUsertoTable);
+  const editUsertoTable = useTableStore((state) => state.editUsertoTable);
 
-  
   // add user to the table handler
-  const addHandler = () => {
-    addUsertoTabl(name, email, city, street, gender, phoneNumber);
+  const addRowHandler = () => {
+    addUsertoTable(name, email, city, street, gender, phone);
     setModal(!modal);
   };
 
+  const EditRowHandler = () =>{
+    editUsertoTable(id,name, email, city, street, gender, phone);
+    setModal(!modal);
+  }
+
   return (
     <Container>
-        <Button color="primary" onClick={toggle}>
-          Add User
-        </Button>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Add a user to the table</ModalHeader>
+      <Modal isOpen={modal} toggle={() => setModal(!modal)}>
+        <ModalHeader toggle={() => setModal(!modal)}>
+          {!editable ? "Add a user to the table" : "Edit a user Info"}
+        </ModalHeader>
         <ModalBody>
           <Form>
             <Row>
@@ -59,8 +88,8 @@ const [modal, setModal] = useState<boolean>(false)
                 <FormGroup>
                   <Label for="Name">Name</Label>
                   <Input
-                  value={row.name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    onChange={(e) =>  setName(e.target.value)}
                     id="Name"
                     name="name"
                     placeholder="user name"
@@ -72,7 +101,7 @@ const [modal, setModal] = useState<boolean>(false)
                 <FormGroup>
                   <Label for="Email">Email</Label>
                   <Input
-                  value={email}
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     id="Eamil"
                     name="email"
@@ -111,7 +140,7 @@ const [modal, setModal] = useState<boolean>(false)
             <FormGroup>
               <Label for="PhoneNumber">Phone Number</Label>
               <Input
-              value={phoneNumber}
+              value={phone}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 id="PhoneNumber"
                 name="phoneNumber"
@@ -120,7 +149,6 @@ const [modal, setModal] = useState<boolean>(false)
             </FormGroup>
             <Label>Gender</Label>
             <Input
-            value={gender}
               onChange={(e) => setGender(e.target.value)}
               className="mb-3"
               type="select"
@@ -130,15 +158,27 @@ const [modal, setModal] = useState<boolean>(false)
               <option>male</option>
               <option>female</option>
             </Input>
-            <Button
-              color="primary"
-              onClick={(e) => {
-                e.preventDefault();
-                addHandler();
-              }}
-            >
-              Add
-            </Button>{" "}
+            {editable ? (
+              <Button
+                color="primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                 EditRowHandler();
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                color="primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addRowHandler();
+                }}
+              >
+                Add
+              </Button>
+            )}
           </Form>
         </ModalBody>
       </Modal>

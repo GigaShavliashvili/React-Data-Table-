@@ -19,13 +19,9 @@ interface Row {
   phone: string;
 }
 
-const Table = () => {
+const Table: React.FC = () => {
 
-   
-    
   const data = useTableStore((state) => state.data);
-  const loading = useTableStore((state) => state.loading);
-  const hasErrors = useTableStore((state) => state.hasErrors);
   const removeRow = useTableStore((state) => state.removeRow);
 
   const columns: TableColumn<Row>[] = [
@@ -75,16 +71,49 @@ const Table = () => {
     removeRow(id);
   };
 
+  const rowinfoObject: Row = {
+    id: 0,
+    name: "",
+    email: "",
+    gender: "",
+    address: {
+      city: "",
+      street: "",
+    },
+    phone: "",
+  };
 
-   const getRowdata = useTableStore((state:any) => state.getRowdata);
+  const [rowInfo, setRowInfo] = useState<Row>(rowinfoObject);
+
   //Row double click
   const editRow = (row: Row) => {
-  console.log(row);
-  getRowdata(row)
+    setRowInfo(row);
+    setModal(!modal);
+    setEdit(true);
   };
+
+  // modal toggle state
+  const [modal, setModal] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
 
   return (
     <>
+      <Button
+        color="primary"
+        onClick={() => {
+          setModal(!modal);
+          setEdit(false);
+          setRowInfo(rowinfoObject);
+        }}
+      >
+        Add User
+      </Button>
+      <AddModal
+        editable={edit}
+        modal={modal}
+        setModal={setModal}
+        rowInfo={rowInfo}
+      />
       <DataTable
         title="User List"
         columns={columns}

@@ -19,8 +19,8 @@ interface InitialState {
   hasErrors:boolean
   fetchData:(url:string) => void
   removeRow:(id:number) => void
-  addUsertoTable: (name:string, email:string, city:string, street:string, gender:string, phoneNumber:string) => void
-  rowData:Table;
+  addUsertoTable: (name:string, email:string, city:string, street:string, gender:string,phone:string) => void
+  editUsertoTable: (id:number,name:string, email:string, city:string, street:string, gender:string,phone:string) => void
 }
 
 
@@ -28,15 +28,6 @@ export const useTableStore = create<InitialState>((set) => ({
   data:[],
   loading: false,
   hasErrors: false,
-  rowData:{ id:0,
-    name:"",
-    email:"",
-    gender: "",
-    address: {
-      street:"",
-      city: "",
-    },
-    phone: ""},
   //@param response
   fetchData: async (url) => {
     set(() => ({ loading: true }));
@@ -48,7 +39,7 @@ export const useTableStore = create<InitialState>((set) => ({
     }
   },
 
-  //delete row by id
+  //delete row by id 
   removeRow: (id) => 
 
     set((state) => {
@@ -59,20 +50,27 @@ const newData = state.data.filter((el) => el.id !== id)
     }),
 
     // add a user to the table
-    addUsertoTable: (name, email, city, street, gender, phoneNumber) => set((state) =>{
+    addUsertoTable: (name, email, city, street, gender, phone) => set((state) =>{
       const id = state.data.length + 1;
 
      //creating new user 
-      const newUser = {id,name, email, address:{city, street}, gender, phone:phoneNumber};
+      const newUser = {id,name, email, address:{city, street}, gender, phone};
       return({
         data:[...state.data, newUser]
       })
     }),
-    getRowdata:(row:any) =>set((state) =>{
-      return{
-        rowData:row
+    editUsertoTable:(id,name, email, city, street, gender, phone) => set((state) =>{
+      const updataedUser = {id,name, email, address:{city, street}, gender, phone};
+       const newData = state.data.map((item) =>{
+      if(item.id === id){
+        return updataedUser;
       }
-    })
+      return item;
+       })
+      return({
+        data:newData
+      })
+    }),
 }));
 
 

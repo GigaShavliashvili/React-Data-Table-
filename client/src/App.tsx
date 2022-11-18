@@ -18,12 +18,7 @@ interface Row {
   phone: string;
 }
 
-const App = () => {
-
-/*   const [rowInfo, setRowInfo] = useState<any>()
-  const [edit,setEdit] = useState<boolean>(false); */
-
-  
+const App:React.FC = () => {
   
   //get table data
   const fetchData = useTableStore((state) => state.fetchData);
@@ -37,7 +32,6 @@ const App = () => {
     <MainContainer>
       <Flex>
         <PieChart />
-        <AddModal />
       </Flex>
       <Table/>
     </MainContainer>
