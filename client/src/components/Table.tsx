@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import DataTable, {
-  ExpanderComponentProps,
   TableColumn,
 } from "react-data-table-component";
 import { useTableStore } from "../zustand/store";
-import { Button, Modal } from "reactstrap";
+import { Button} from "reactstrap";
 import AddModal from "./AddModal";
+import styled from "styled-components";
 
 interface Row {
   id: number;
@@ -89,31 +89,37 @@ const Table: React.FC = () => {
   const editRow = (row: Row) => {
     setRowInfo(row);
     setModal(!modal);
-    setEdit(true);
+    setEditable(true);
   };
 
   // modal toggle state
   const [modal, setModal] = useState<boolean>(false);
-  const [edit, setEdit] = useState<boolean>(false);
+  const [editable, setEditable] = useState<boolean>(false);
 
   return (
     <>
+    <ModalBtn>
+     {/*  modal oppener button */}
       <Button
         color="primary"
         onClick={() => {
           setModal(!modal);
-          setEdit(false);
+          setEditable(false);
           setRowInfo(rowinfoObject);
         }}
       >
         Add User
       </Button>
+      </ModalBtn>
+
+
       <AddModal
-        editable={edit}
+        editable={editable}
         modal={modal}
         setModal={setModal}
         rowInfo={rowInfo}
       />
+
       <DataTable
         title="User List"
         columns={columns}
@@ -126,5 +132,10 @@ const Table: React.FC = () => {
     </>
   );
 };
+
+const ModalBtn = styled.div`
+  display: flex;
+  justify-content: end;
+`;
 
 export default Table;

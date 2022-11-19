@@ -1,7 +1,7 @@
 import create from "zustand";
 import axios from "axios";
 
- interface Table {
+interface Table {
   id: number;
   name: string;
   email: string;
@@ -11,21 +11,35 @@ import axios from "axios";
     city: string;
   };
   phone: string;
-} 
-
-interface InitialState {
-  data: Table[]
-  loading:boolean
-  hasErrors:boolean
-  fetchData:(url:string) => void
-  removeRow:(id:number) => void
-  addUsertoTable: (name:string, email:string, city:string, street:string, gender:string,phone:string) => void
-  editUsertoTable: (id:number,name:string, email:string, city:string, street:string, gender:string,phone:string) => void
 }
 
+interface InitialState {
+  data: Table[];
+  loading: boolean;
+  hasErrors: boolean;
+  fetchData: (url: string) => void;
+  removeRow: (id: number) => void;
+  addUsertoTable: (
+    name: string,
+    email: string,
+    city: string,
+    street: string,
+    gender: string,
+    phone: string
+  ) => void;
+  editUsertoTable: (
+    id: number,
+    name: string,
+    email: string,
+    city: string,
+    street: string,
+    gender: string,
+    phone: string
+  ) => void;
+}
 
 export const useTableStore = create<InitialState>((set) => ({
-  data:[],
+  data: [],
   loading: false,
   hasErrors: false,
   //@param response
@@ -39,38 +53,53 @@ export const useTableStore = create<InitialState>((set) => ({
     }
   },
 
-  //delete row by id 
-  removeRow: (id) => 
-
+  //delete row by id
+  removeRow: (id) =>
     set((state) => {
-const newData = state.data.filter((el) => el.id !== id)
-     return ({
-        data: newData
-      })
+      const newData = state.data.filter((el) => el.id !== id);
+      return {
+        data: newData,
+      };
     }),
 
-    // add a user to the table
-    addUsertoTable: (name, email, city, street, gender, phone) => set((state) =>{
+  // add a user to the table
+  addUsertoTable: (name, email, city, street, gender, phone) =>
+    set((state) => {
       const id = state.data.length + 1;
 
-     //creating new user 
-      const newUser = {id,name, email, address:{city, street}, gender, phone};
-      return({
-        data:[...state.data, newUser]
-      })
+      //creating new user
+      const newUser = {
+        id,
+        name,
+        email,
+        address: { city, street },
+        gender,
+        phone,
+      };
+      return {
+        data: [...state.data, newUser],
+      };
     }),
-    editUsertoTable:(id,name, email, city, street, gender, phone) => set((state) =>{
-      const updataedUser = {id,name, email, address:{city, street}, gender, phone};
-       const newData = state.data.map((item) =>{
-      if(item.id === id){
-        return updataedUser;
-      }
-      return item;
-       })
-      return({
-        data:newData
-      })
+
+  //find one and updata
+  editUsertoTable: (id, name, email, city, street, gender, phone) =>
+    set((state) => {
+      const updataedUser = {
+        id,
+        name,
+        email,
+        address: { city, street },
+        gender,
+        phone,
+      };
+      const newData = state.data.map((item) => {
+        if (item.id === id) {
+          return updataedUser;
+        }
+        return item;
+      });
+      return {
+        data: newData,
+      };
     }),
 }));
-
-

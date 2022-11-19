@@ -1,11 +1,6 @@
 import { Label } from "reactstrap";
 import React, { useState, useEffect } from "react";
 
-interface Population {
-  cityName: string;
-  population: number;
-}
-
 const useProcentageofPeopleHook = (data: any) => {
   //convert data to citys array string
   const Cities = data.map((item: any) => {
@@ -13,7 +8,7 @@ const useProcentageofPeopleHook = (data: any) => {
   });
 
   //get uniq city and sort by abc
-  const uniqCity: any = Array.from(new Set(Cities)).sort();
+  const uniqCity:any = Array.from(new Set(Cities)).sort();
 
   //count number of same city
   const getOccurrence = (array: string[], value: string) => {

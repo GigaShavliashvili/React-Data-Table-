@@ -14,7 +14,6 @@ import {
 import styled from "styled-components";
 import { useTableStore } from "../zustand/store";
 
-
 interface Rowinfo {
   id: number;
   name: string;
@@ -36,9 +35,8 @@ function AddModal({
   editable: boolean;
   modal: boolean;
   setModal: (value: boolean) => void;
-  rowInfo:Rowinfo
+  rowInfo: Rowinfo;
 }) {
-
   // user form
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -46,34 +44,58 @@ function AddModal({
   const [street, setStreet] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [phone, setPhoneNumber] = useState<string>("");
-  const [id, setUserID] = useState<number>(0)
+  const [id, setUserID] = useState<number>(0);
 
-useEffect(() =>{
-setName(rowInfo.name)
-setEmail(rowInfo.email)
-setCity(rowInfo.address.city)
-setStreet(rowInfo.address.street)
-setPhoneNumber(rowInfo.phone)
-setGender(rowInfo.gender)
-setUserID(rowInfo.id)
-},[editable])
-
-
+  // setInputvalue for edit
+  useEffect(() => {
+    setName(rowInfo.name);
+    setEmail(rowInfo.email);
+    setCity(rowInfo.address.city);
+    setStreet(rowInfo.address.street);
+    setPhoneNumber(rowInfo.phone);
+    setGender(rowInfo.gender);
+    setUserID(rowInfo.id);
+  }, [editable, rowInfo]);
 
   // get add event
   const addUsertoTable = useTableStore((state) => state.addUsertoTable);
-  const editUsertoTable = useTableStore((state) => state.editUsertoTable);
 
-  // add user to the table handler
+  // add user to the table
   const addRowHandler = () => {
-    addUsertoTable(name, email, city, street, gender, phone);
-    setModal(!modal);
+    if (
+      name !== "" &&
+      email !== "" &&
+      city !== "" &&
+      street !== "" &&
+      phone !== "" &&
+      gender !== ""
+    ) {
+      addUsertoTable(name, email, city, street, gender, phone);
+      setModal(!modal);
+    } else {
+      alert("Please Enter All Fields!");
+    }
   };
 
-  const EditRowHandler = () =>{
-    editUsertoTable(id,name, email, city, street, gender, phone);
-    setModal(!modal);
-  }
+  //get edit event
+  const editUsertoTable = useTableStore((state) => state.editUsertoTable);
+
+  // edit and updata user to the table
+  const EditRowHandler = () => {
+    if (
+      name !== "" &&
+      email !== "" &&
+      city !== "" &&
+      street !== "" &&
+      phone !== "" &&
+      gender !== ""
+    ) {
+      editUsertoTable(id, name, email, city, street, gender, phone);
+      setModal(!modal);
+    } else {
+      alert("Please Enter All Fields!");
+    }
+  };
 
   return (
     <Container>
@@ -89,7 +111,7 @@ setUserID(rowInfo.id)
                   <Label for="Name">Name</Label>
                   <Input
                     value={name}
-                    onChange={(e) =>  setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                     id="Name"
                     name="name"
                     placeholder="user name"
@@ -116,7 +138,7 @@ setUserID(rowInfo.id)
                 <FormGroup>
                   <Label for="exampleCity">City</Label>
                   <Input
-                  value={city}
+                    value={city}
                     onChange={(e) => setCity(e.target.value)}
                     id="exampleCity"
                     placeholder="tbilisi"
@@ -128,7 +150,7 @@ setUserID(rowInfo.id)
                 <FormGroup>
                   <Label for="Street">Street</Label>
                   <Input
-                  value={street}
+                    value={street}
                     onChange={(e) => setStreet(e.target.value)}
                     placeholder="dolidze N19"
                     id="Street"
@@ -140,7 +162,7 @@ setUserID(rowInfo.id)
             <FormGroup>
               <Label for="PhoneNumber">Phone Number</Label>
               <Input
-              value={phone}
+                value={phone}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 id="PhoneNumber"
                 name="phoneNumber"
@@ -152,23 +174,25 @@ setUserID(rowInfo.id)
               onChange={(e) => setGender(e.target.value)}
               className="mb-3"
               type="select"
-              defaultValue="coose a gender"
+              defaultValue="choose a gender"
             >
               <option disabled>choose a gender</option>
               <option>male</option>
               <option>female</option>
             </Input>
             {editable ? (
+              //edit
               <Button
                 color="primary"
                 onClick={(e) => {
                   e.preventDefault();
-                 EditRowHandler();
+                  EditRowHandler();
                 }}
               >
                 Edit
               </Button>
             ) : (
+              //add
               <Button
                 color="primary"
                 onClick={(e) => {

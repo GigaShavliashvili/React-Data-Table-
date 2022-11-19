@@ -1,20 +1,18 @@
-
 import ReactApexChart from "react-apexcharts";
-import useProcentageofPeopleHook from "../Hook/getProcentageofPeople";
+import useProcentageofPeopleHook from "../Helper/getProcentageofPeople";
 import { useTableStore } from "../zustand/store";
 const PieChart = () => {
+  const data = useTableStore((state) => state.data);
 
-    const data = useTableStore((state) => state.data);
-  
-  const [Population] =  useProcentageofPeopleHook(data);
+  const [Population] = useProcentageofPeopleHook(data);
 
   var options: ApexCharts.ApexOptions = {
-    series:Population.map((el:any) =>{
-        return el.populationProcentage
-    }) , 
-    labels:Population.map((el:any) =>{
-        return el.cityName
-    })
+    series: Population.map((el: any) => {
+      return el.populationProcentage;
+    }),
+    labels: Population.map((el: any) => {
+      return el.cityName;
+    }),
   };
 
   return (
